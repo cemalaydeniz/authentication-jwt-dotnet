@@ -29,12 +29,12 @@ namespace authentication_jwt_dotnet.Services.Implementations
 
         public async Task<User?> FindAsync(string id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(_ => _.Id == id);
+            return await _dbContext.Users.Include(_ => _.Roles).FirstOrDefaultAsync(_ => _.Id == id);
         }
 
         public async Task<User?> FindAsync(Expression<Func<User, bool>> query)
         {
-            return await _dbContext.Users.SingleOrDefaultAsync(query);
+            return await _dbContext.Users.Include(_ => _.Roles).SingleOrDefaultAsync(query);
         }
 
         public async Task DeleteAsync(string id)

@@ -35,7 +35,11 @@ namespace authentication_jwt_dotnet.Controllers
             {
                 Email = registerModel.Email,
                 PasswordHashed = BCrypt.Net.BCrypt.HashPassword(registerModel.Password),
-                Name = registerModel.Name
+                Name = registerModel.Name,
+                Roles = new List<Role>()
+                {
+                    new Role() { Name = "user" }
+                }
             };
 
             await _userService.AddAsync(newUser);

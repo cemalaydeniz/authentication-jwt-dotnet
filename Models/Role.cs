@@ -4,5 +4,8 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
+
+        // Foreign keys
+        public User user { get; set; } = null!;
     }
 }
