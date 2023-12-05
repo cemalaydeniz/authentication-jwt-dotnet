@@ -42,5 +42,20 @@ namespace authentication_jwt_dotnet.Controllers
 
             return Ok("The user has been added");
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]LoginModel loginModel)
+        {
+            User? user = await _userService.FindAsync(_ => _.Email == loginModel.Email);
+            if (user == null)
+                return BadRequest("The user does not exist");
+
+            if (!BCrypt.Net.BCrypt.Verify(loginModel.Password, user.PasswordHashed))
+                return BadRequest("Wrong password");
+
+            var token = _tokenService.CreateToken(user);
+
+            return Ok(new { token });
+        }
     }
 }
