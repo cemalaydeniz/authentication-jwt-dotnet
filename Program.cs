@@ -1,4 +1,7 @@
 using authentication_jwt_dotnet.Data;
+using authentication_jwt_dotnet.Middlewares;
+using authentication_jwt_dotnet.Services.Implementations;
+using authentication_jwt_dotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +32,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Services
+builder.Services.AddTransient<AppDbContext>();
+builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
+builder.Services.AddTransient<IUserService, UserService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -41,6 +49,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandler>();
 
 app.MapControllers();
 
