@@ -1,7 +1,9 @@
 ﻿using authentication_jwt_dotnet.DTOs;
 using authentication_jwt_dotnet.Models;
 using authentication_jwt_dotnet.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace authentication_jwt_dotnet.Controllers
 {
@@ -60,6 +62,24 @@ namespace authentication_jwt_dotnet.Controllers
             var token = _tokenService.CreateToken(user);
 
             return Ok(new { token });
+        }
+
+        [Authorize]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateName([FromQuery]string name)
+        {
+            string? id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id == null)
+                return Unauthorized("Unauthorized");
+
+            User? user = await _userService.FindAsync(id);
+            if (user == null)
+                return Unauthorized("Unauthorized");
+
+            user.Name = name;
+            await _userService.UpdateAsync(user);
+
+            return Ok("The user has been updated");
         }
     }
 }
