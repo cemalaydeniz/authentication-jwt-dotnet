@@ -81,5 +81,14 @@ namespace authentication_jwt_dotnet.Controllers
 
             return Ok("The user has been updated");
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]string id)
+        {
+            await _userService.DeleteAsync(id);
+
+            return Ok("The user has been deleted");
+        }
     }
 }

@@ -49,6 +49,7 @@ namespace authentication_jwt_dotnet.Services.Implementations
 
         public async Task DeleteAsync(User user)
         {
+            _dbContext.Roles.RemoveRange(user.Roles);
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
         }

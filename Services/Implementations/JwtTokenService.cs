@@ -26,16 +26,19 @@ namespace authentication_jwt_dotnet.Services.Implementations
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
+            List<Claim> claims = new List<Claim>() { new Claim(ClaimTypes.Name, user.Id) };
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
+
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 expires: token.Expiration,
                 notBefore: DateTime.Now,
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
-                claims: new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id)
-                } );
+                claims: claims);
 
             token.AccessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
